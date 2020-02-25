@@ -1,7 +1,7 @@
 import XCTest
 
-import ThirdPartyJWTAuthenticationTests
+import JWT3PATests
 
 var tests = [XCTestCaseEntry]()
-tests += ThirdPartyJWTAuthenticationTests.allTests()
+tests += JWT3PATests.allTests()
 XCTMain(tests)
