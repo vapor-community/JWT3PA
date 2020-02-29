@@ -131,7 +131,7 @@ All four routes return a `String` which contains the value to use in subsequent 
 ```swift
 func routes(_ app: Application) throws {
     let users = app.grouped("users");
-    JWT3PAUserRoutes<T>.register(routeGroup: users)
+    JWT3PAUserRoutes<Producer>.register(routeGroup: users)
 }
 ```
 
