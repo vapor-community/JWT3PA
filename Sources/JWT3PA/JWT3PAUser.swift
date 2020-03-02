@@ -25,19 +25,19 @@ internal extension JWT3PAUser {
         return id
     }
 
-    var _$google: Field<String?> {
+    var _$google: OptionalField<String> {
         guard let mirror = Mirror(reflecting: self).descendant("_google"),
-            let field = mirror as? Field<String?> else {
-                fatalError("google property must be declared using @Field")
+            let field = mirror as? OptionalField<String> else {
+                fatalError("google property must be declared using @OptionalField")
         }
 
         return field
     }
 
-    var _$apple: Field<String?> {
+    var _$apple: OptionalField<String> {
         guard let mirror = Mirror(reflecting: self).descendant("_apple"),
-            let field = mirror as? Field<String?> else {
-                fatalError("apple property must be declared using @Field")
+            let field = mirror as? OptionalField<String> else {
+                fatalError("apple property must be declared using @OptionalField")
         }
 
         return field
@@ -93,10 +93,10 @@ internal extension JWT3PAUser {
             switch vendor {
             case .apple:
                 apple = subject.value
-                filter = \._$apple == apple
+                filter = \._$apple == apple!
             case .google:
                 google = subject.value
-                filter = \._$google == google
+                filter = \._$google == google!
             }
 
             return Self.query(on: req.db)
