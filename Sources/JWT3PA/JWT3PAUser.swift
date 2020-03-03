@@ -10,8 +10,18 @@ public protocol JWT3PAUser: Model & Authenticatable {
     var apple: String? { get set }
     var active: Bool { get set }
 
-    init?(dto: UserDTO, email: String?, apple: String?, google: String?)
+    /// Returns a user object which should be created in the database.  If you want to disallow creation
+    /// for any reason you should return a failed future.
+    /// - Parameters:
+    ///   - req: The registration request.
+    ///   - dto: The registration data.
+    ///   - email: The user's email address, if provided.
+    ///   - apple: The user's Sign in with Apple identifier, if using Apple
+    ///   - google: The user's Google identifier, if using Google.
+    static func registerUser(req: Request, dto: UserDTO, email: String?, apple: String?, google: String?) -> EventLoopFuture<Self>
 
+    /// Generates the token which should be stored in the database.  You can store a refresh token here if using JWT.
+    /// - Parameter req: The request object.
     func generateToken(req: Request) -> EventLoopFuture<Token>
 }
 
@@ -108,16 +118,15 @@ internal extension JWT3PAUser {
                         return req.eventLoop.makeFailedFuture(Abort(.badRequest))
                     }
 
-                    guard let user = Self(dto: dto, email: email, apple: apple, google: google) else {
-                        return req.eventLoop.makeFailedFuture(Abort(.internalServerError))
-                    }
-
-                    return user.save(on: req.db).flatMap {
-                        user.generateToken(req: req).flatMap { token in
-                            token.save(on: req.db).map {
-                                token.value
+                    return Self.registerUser(req: req, dto: dto, email: email, apple: apple, google: google)
+                        .flatMap { user in
+                            return user.save(on: req.db).flatMap {
+                                user.generateToken(req: req).flatMap { token in
+                                    token.save(on: req.db).map {
+                                        token.value
+                                    }
+                                }
                             }
-                        }
                     }
             }
         } catch {

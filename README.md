@@ -77,15 +77,23 @@ final class Producer: Model, Content, JWT3PAUser, Authenticatable {
     init() {
     }
 
-    init?(dto: RegisterUserDTO, email: String?, apple: String? = nil, google: String? = nil) {
-        guard let name = dto.name, let email = email else { return nil }
-        
-        self.name = name
-        self.email = email
-        self.apple = apple
-        self.google = google
-        self.active = true
-        self.admin = false
+    static func registerUser(req: Request, dto: RegisterUserDTO, email: String?, apple: String?, google: String?) -> EventLoopFuture<Producer> {
+        guard let email = email else {
+            return req.eventLoop.makeFailedFuture(Abort(.badRequest))
+        }
+
+        // Not everyone can register.  Valid users will already have an email
+        // in the database so we're just associating their apple/google identifier.
+        return Producer.query(on: req.db)
+            .filter(\.$email == email)
+            .first()
+            .unwrap(or: Abort(.badRequest))
+            .map { producer in
+                producer.apple = apple ?? producer.apple
+                producer.google = google ?? producer.google
+
+                return producer
+        }
     }
 
     func encodeResponse(for request: Request) -> EventLoopFuture<Response> {
