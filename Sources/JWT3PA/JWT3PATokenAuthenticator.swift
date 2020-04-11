@@ -7,7 +7,11 @@ final public class JWT3PATokenAuthenticator<T>: BearerAuthenticator where T: JWT
             .filter(\._$value == bearer.token)
             .first()
             .unwrap(or: Abort(.forbidden))
-            .map { request.auth.login($0.user) }
+            .flatMap {
+                $0._$user.get(on: request.db).map {
+                    request.auth.login($0)
+                }
+        }
     }
 
     /// Creates a guard middleware which will ensure an authenticated user is present on the route.
