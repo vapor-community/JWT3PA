@@ -8,7 +8,7 @@ internal struct AppleWebUserNamePayload: Content {
 }
 
 internal struct AppleWebUserPayload: Content {
-    let name:
+    let name: String?
     let email: String?
 }
 
@@ -26,9 +26,6 @@ internal struct AppleWebPayload: Content {
 
 public class JWT3PAUserRoutes<T> where T: JWT3PAUser {
     func appleLogin(req: Request) throws -> EventLoopFuture<String> {
-        let p = try req.content.decode(Payload.self)
-        debugPrint(p)
-        print(p.id_token)
         return req.jwt.apple.verify().flatMap { (token: AppleIdentityToken) in
             T.apiTokenForUser(filter: \._$apple == token.subject.value, req: req)
         }
