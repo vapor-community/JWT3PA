@@ -2,9 +2,34 @@ import Vapor
 import Fluent
 import JWT
 
+internal struct AppleWebUserNamePayload: Content {
+    let firstName: String?
+    let lastName: String?
+}
+
+internal struct AppleWebUserPayload: Content {
+    let name:
+    let email: String?
+}
+
+internal struct AppleWebPayload: Content {
+    enum CodingKeys: String, CodingKey {
+        case state, code, user
+        case idToken = "id_token"
+    }
+
+    let state: String?
+    let code: String?
+    let idToken: String?
+    let user: AppleWebUserPayload
+}
+
 public class JWT3PAUserRoutes<T> where T: JWT3PAUser {
     func appleLogin(req: Request) throws -> EventLoopFuture<String> {
-        req.jwt.apple.verify().flatMap { (token: AppleIdentityToken) in
+        let p = try req.content.decode(Payload.self)
+        debugPrint(p)
+        print(p.id_token)
+        return req.jwt.apple.verify().flatMap { (token: AppleIdentityToken) in
             T.apiTokenForUser(filter: \._$apple == token.subject.value, req: req)
         }
     }

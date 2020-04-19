@@ -15,9 +15,9 @@ let package = Package(
             targets: ["JWT3PA"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0-beta"),
-        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-beta"),
-        .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0-beta")
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.2.0"),
+        .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0-rc"),
+        .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0-rc")
     ],
     targets: [
         .target(
