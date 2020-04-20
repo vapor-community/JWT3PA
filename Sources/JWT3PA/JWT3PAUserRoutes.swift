@@ -22,8 +22,8 @@ public class JWT3PAUserRoutes<T> where T: JWT3PAUser {
         let token = [UInt8].random(count: 16).base64
 
         response.headers.setCookie = HTTPCookies(dictionaryLiteral:
-            ("XSRF-TOKEN", HTTPCookies.Value(string: token, isSecure: false)),
-            ("CSRF-TOKEN", HTTPCookies.Value(string: token, isSecure: false))
+            ("XSRF-TOKEN", HTTPCookies.Value(string: token, isSecure: true)),
+            ("CSRF-TOKEN", HTTPCookies.Value(string: token, isSecure: true))
         )
     }
 
