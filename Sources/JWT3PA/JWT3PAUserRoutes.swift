@@ -44,8 +44,6 @@ public class JWT3PAUserRoutes<T> where T: JWT3PAUser {
 
         Self.generateCrossSiteForgeryCookies(for: response)
 
-        print("Headers are this")
-        print(response.headers)
         return response
     }
 
@@ -99,6 +97,13 @@ public class JWT3PAUserRoutes<T> where T: JWT3PAUser {
         self.fragmentKey = fragmentKey
     }
 
+    /// Register the routes needed for Apple and Google authentication.
+    /// - Parameters:
+    ///   - routeGroup: The base route to register against.
+    ///   - routes: Which vendor routes to register.
+    ///   - redirect: The URL that Vapor will redirect your web client to after authentication.
+    ///   - fragmentKey: The key to use on the URL redirect if you wish to pass the token in
+    ///                  the query param instead of the body.
     public static func register(
         routeGroup: RoutesBuilder,
         routes: Routes = .all,
